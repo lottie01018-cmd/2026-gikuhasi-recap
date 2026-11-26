@@ -278,14 +278,14 @@ $('saveBtn').onclick=async()=>{
     const chosen=selected(),best=favorites();
     const groups=new Map();chosen.forEach(e=>{const m=e.month||Number(e.date.slice(5,7));if(!groups.has(m))groups.set(m,[]);groups.get(m).push(e);});
     const monthGroups=[...groups.entries()].sort((a,b)=>a[0]-b[0]);
-    const W=1200,scale=2,desktopX=70,desktopW=1060,windowX=105,windowW=990;
-    const contentX=windowX+42,contentW=windowW-84,cols=2,gap=18,colW=(contentW-gap)/2;
+    const W=1600,scale=2,desktopX=55,desktopW=1490,windowX=85,windowW=1430;
+    const contentX=windowX+70,contentW=windowW-140,cols=2,gap=24,colW=(contentW-gap)/2;
     const monthRows=[];for(let i=0;i<monthGroups.length;i+=cols){monthRows.push(monthGroups.slice(i,i+cols));}
-    const monthCardHeights=monthGroups.map(([m,events])=>46+events.length*49);
+    const monthCardHeights=monthGroups.map(([m,events])=>58+events.length*66);
     const monthGridHeight=monthRows.reduce((sum,row)=>sum+Math.max(...row.map(([m,events])=>monthCardHeights[monthGroups.findIndex(x=>x[0]===m)]))+16,0);
     const bestLines=Math.max(1,Math.ceil(Math.max(best.length,1)/2));
-    const contentHeight=145+150+22+90+26+Math.max(76,bestLines*48+22)+30+42+monthGridHeight+78;
-    const windowY=76,titleH=48,windowH=titleH+contentHeight+28;
+    const contentHeight=220+185+30+112+32+Math.max(100,bestLines*64+28)+38+54+monthGridHeight+105;
+    const windowY=82,titleH=58,windowH=titleH+contentHeight+36;
     const H=windowY+windowH+76;
     const canvas=document.createElement('canvas');canvas.width=W*scale;canvas.height=H*scale;
     const ctx=canvas.getContext('2d');ctx.scale(scale,scale);
@@ -297,53 +297,54 @@ $('saveBtn').onclick=async()=>{
     const bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#8dbbd2');bg.addColorStop(.55,'#6f9eb9');bg.addColorStop(1,'#c2e2ed');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
     const glow=ctx.createRadialGradient(180,180,10,180,180,760);glow.addColorStop(0,'rgba(255,255,255,.52)');glow.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);
     ctx.fillStyle='rgba(248,251,253,.92)';ctx.fillRect(0,0,W,38);
-    text('●',24,25,'15px -apple-system, sans-serif',teal);text('Finder',52,25,'600 15px -apple-system, sans-serif','#3e5660');
-    text('File     Edit     View     Window     Help',122,25,'14px -apple-system, sans-serif','#536b75');
-    text('◖ Wi-Fi     ▰     2026',W-24,25,'13px -apple-system, sans-serif','#536b75','right');
+    text('●',30,28,'17px -apple-system, sans-serif',teal);text('Finder',62,28,'600 18px -apple-system, sans-serif','#3e5660');
+    text('File     Edit     View     Window     Help',145,28,'17px -apple-system, sans-serif','#536b75');
+    text('◖ Wi-Fi     ▰     2026',W-30,28,'16px -apple-system, sans-serif','#536b75','right');
     // floating Mac window
     ctx.shadowColor='rgba(13,45,67,.30)';ctx.shadowBlur=34;ctx.shadowOffsetY=18;
     rounded(windowX,windowY,windowW,windowH,20,'#f6fbfd','rgba(255,255,255,.9)',2);
     ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;
     rounded(windowX,windowY,windowW,titleH,18,'#edf0f4','#d5dce2',1);
     ctx.fillStyle='#edf0f4';ctx.fillRect(windowX,windowY+titleH-14,windowW,14);
-    ['#ff6259','#ffbd44','#35c759'].forEach((c,i)=>{ctx.beginPath();ctx.arc(windowX+25+i*24,windowY+24,7.5,0,Math.PI*2);ctx.fillStyle=c;ctx.fill();ctx.strokeStyle='rgba(0,0,0,.12)';ctx.stroke();});
-    text('2026-gikuhasi-recap',windowX+windowW/2,windowY+29,'500 16px -apple-system, sans-serif','#53616e','center');
-    let y=windowY+titleH+30;
-    // logo: reuse the exact Gikuhasi logo already embedded in the page
+    ['#ff6259','#ffbd44','#35c759'].forEach((c,i)=>{ctx.beginPath();ctx.arc(windowX+30+i*29,windowY+29,9,0,Math.PI*2);ctx.fillStyle=c;ctx.fill();ctx.strokeStyle='rgba(0,0,0,.12)';ctx.stroke();});
+    text('2026-gikuhasi-recap',windowX+windowW/2,windowY+36,'500 19px -apple-system, sans-serif','#53616e','center');
+    let y=windowY+titleH+34;
+    // White dotted GIKUHASI logo: place it on a dark teal plaque for clear contrast.
     const logo=$('.brand');
-    if(logo&&logo.complete&&logo.naturalWidth){const maxW=430,maxH=116,ratio=Math.min(maxW/logo.naturalWidth,maxH/logo.naturalHeight);const lw=logo.naturalWidth*ratio,lh=logo.naturalHeight*ratio;ctx.drawImage(logo,W/2-lw/2,y,lw,lh);y+=lh+12;}
-    else {text('gikuhasi',W/2,y+55,'600 58px "IBM Plex Mono",monospace','#ffffff','center');y+=75;}
-    text('2026  ·  PERSONAL LIVE ARCHIVE',W/2,y+3,'13px "DM Mono",monospace',teal,'center');y+=32;
+    const logoBoxW=contentW,logoBoxH=150;rounded(contentX,y,logoBoxW,logoBoxH,12,'#557985');
+    if(logo&&logo.complete&&logo.naturalWidth){const maxW=650,maxH=104,ratio=Math.min(maxW/logo.naturalWidth,maxH/logo.naturalHeight);const lw=logo.naturalWidth*ratio,lh=logo.naturalHeight*ratio;ctx.drawImage(logo,W/2-lw/2,y+12+(maxH-lh)/2,lw,lh);}
+    else {text('gikuhasi',W/2,y+88,'600 76px \"IBM Plex Mono\",monospace','#ffffff','center');}
+    text('2026  ·  PERSONAL LIVE ARCHIVE',W/2,y+133,'17px \"DM Mono\",monospace','#ffffff','center');y+=logoBoxH+30;
     ctx.strokeStyle='#b8d2dc';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(contentX,y);ctx.lineTo(contentX+contentW,y);ctx.stroke();y+=28;
-    text('MY GIKUHASI YEAR FILE',contentX,y,'600 15px "DM Mono",monospace',ink);text('2026 / RECAP',contentX+contentW,y,'13px "DM Mono",monospace',muted,'right');y+=22;
-    const statGap=14,statW=(contentW-statGap*2)/3;const stats=[[String(chosen.length).padStart(2,'0'),'LIVE SHOWS'],[String(best.length).padStart(2,'0'),'BEST LIVE'],['2026','YEAR FILE']];
-    stats.forEach((st,i)=>{const x=contentX+i*(statW+statGap);rounded(x,y,statW,76,9,'#e8f2f5','#c7dbe1',1);text(st[0],x+17,y+43,'600 34px "IBM Plex Mono",monospace',teal);text(st[1],x+17,y+62,'12px "DM Mono",monospace',muted);});y+=98;
+    text('MY GIKUHASI YEAR FILE',contentX,y,'600 19px "DM Mono",monospace',ink);text('2026 / RECAP',contentX+contentW,y,'17px "DM Mono",monospace',muted,'right');y+=22;
+    const statGap=18,statW=(contentW-statGap*2)/3;const stats=[[String(chosen.length).padStart(2,'0'),'LIVE SHOWS'],[String(best.length).padStart(2,'0'),'BEST LIVE'],['2026','YEAR FILE']];
+    stats.forEach((st,i)=>{const x=contentX+i*(statW+statGap);rounded(x,y,statW,96,12,'#e8f2f5','#c7dbe1',1);text(st[0],x+22,y+55,'600 46px \"IBM Plex Mono\",monospace',teal);text(st[1],x+22,y+79,'16px \"DM Mono\",monospace',muted);});y+=120;
     // favorite shows
-    rounded(contentX,y,contentW,36,7,teal);text('✧  BEST LIVE',contentX+14,y+24,'600 14px "DM Mono",monospace','#fff');text('FAVORITES',contentX+contentW-14,y+24,'12px "DM Mono",monospace','#fff','right');y+=48;
+    rounded(contentX,y,contentW,48,9,teal);text('✧  BEST LIVE',contentX+20,y+32,'600 19px \"DM Mono\",monospace','#fff');text('FAVORITES',contentX+contentW-20,y+32,'16px \"DM Mono\",monospace','#fff','right');y+=62;
     const bestItems=best.length?best:[{date:'',title:'아직 선택한 공연이 없어요'}];
-    bestItems.forEach((e,i)=>{const col=i%2,row=Math.floor(i/2),x=contentX+col*(colW+gap),yy=y+row*48;rounded(x,yy,colW,38,6,'#f7e9e5','#e2c9c1',1);const date=e.date?e.date.slice(5).replace('.','/')+'  ':'';text(fit(date+e.title,'13px "IBM Plex Sans KR",sans-serif',colW-24),x+12,yy+24,'13px "IBM Plex Sans KR",sans-serif','#75594f');});
-    y+=Math.ceil(bestItems.length/2)*48+20;
-    rounded(contentX,y,contentW,36,7,teal);text('ATTENDED SHOWS',contentX+14,y+24,'600 14px "DM Mono",monospace','#fff');text(String(chosen.length).padStart(2,'0')+' SHOWS',contentX+contentW-14,y+24,'12px "DM Mono",monospace','#fff','right');y+=48;
+    bestItems.forEach((e,i)=>{const col=i%2,row=Math.floor(i/2),x=contentX+col*(colW+gap),yy=y+row*64;rounded(x,yy,colW,52,8,'#f7e9e5','#e2c9c1',1);const date=e.date?e.date.slice(5).replace('.','/')+'  ':'';text(fit(date+e.title,'17px \"IBM Plex Sans KR\",sans-serif',colW-32),x+16,yy+33,'17px \"IBM Plex Sans KR\",sans-serif','#75594f');});
+    y+=Math.ceil(bestItems.length/2)*64+28;
+    rounded(contentX,y,contentW,48,9,teal);text('ATTENDED SHOWS',contentX+20,y+32,'600 19px \"DM Mono\",monospace','#fff');text(String(chosen.length).padStart(2,'0')+' SHOWS',contentX+contentW-20,y+32,'16px \"DM Mono\",monospace','#fff','right');y+=62;
     monthRows.forEach(row=>{
-      const heights=row.map(([m,events])=>46+events.length*49);const rowH=Math.max(...heights);
+      const heights=row.map(([m,events])=>58+events.length*66);const rowH=Math.max(...heights);
       row.forEach(([month,events],col)=>{
-        const x=contentX+col*(colW+gap);rounded(x,y,colW,rowH,7,'#ffffff','#d5e0e2',1);
-        rounded(x,y,colW,31,7,'#e7f1f4');ctx.fillStyle='#e7f1f4';ctx.fillRect(x,y+20,colW,11);
-        text(String(month).padStart(2,'0')+'  /  MONTH',x+12,y+21,'12px "DM Mono",monospace',teal);
-        events.forEach((e,j)=>{const ey=y+31+j*49;if(j>0){ctx.strokeStyle='#edf0ec';ctx.beginPath();ctx.moveTo(x+12,ey);ctx.lineTo(x+colW-12,ey);ctx.stroke();}
-          text(fit(e.title,'600 13px "IBM Plex Sans KR",sans-serif',colW-24),x+12,ey+19,'600 13px "IBM Plex Sans KR",sans-serif',ink);
-          text(fit(e.date.slice(5).replace('.','.')+'   @ '+e.venue,'11px "DM Mono","IBM Plex Sans KR",monospace',colW-24),x+12,ey+37,'11px "DM Mono","IBM Plex Sans KR",monospace',muted);
+        const x=contentX+col*(colW+gap);rounded(x,y,colW,rowH,9,'#ffffff','#d5e0e2',1);
+        rounded(x,y,colW,40,9,'#e7f1f4');ctx.fillStyle='#e7f1f4';ctx.fillRect(x,y+25,colW,15);
+        text(String(month).padStart(2,'0')+'  /  MONTH',x+18,y+28,'16px \"DM Mono\",monospace',teal);
+        events.forEach((e,j)=>{const ey=y+40+j*66;if(j>0){ctx.strokeStyle='#edf0ec';ctx.beginPath();ctx.moveTo(x+12,ey);ctx.lineTo(x+colW-12,ey);ctx.stroke();}
+          text(fit(e.title,'600 18px \"IBM Plex Sans KR\",sans-serif',colW-36),x+18,ey+26,'600 18px \"IBM Plex Sans KR\",sans-serif',ink);
+          text(fit(e.date.slice(5).replace('.','.')+'   @ '+e.venue,'15px \"DM Mono\",\"IBM Plex Sans KR\",monospace',colW-36),x+18,ey+50,'15px \"DM Mono\",\"IBM Plex Sans KR\",monospace',muted);
         });
       });
-      y+=rowH+14;
+      y+=rowH+18;
     });
     y+=4;ctx.strokeStyle='#c7dbe1';ctx.beginPath();ctx.moveTo(contentX,y);ctx.lineTo(contentX+contentW,y);ctx.stroke();y+=28;
-    text($('nickname').value.trim(),contentX,y,'14px "IBM Plex Sans KR",sans-serif',muted);
-    text('UNOFFICIAL FAN ARCHIVE  ·  GIKUHASI 2026',contentX+contentW,y,'11px "DM Mono",monospace',muted,'right');
+    text($('nickname').value.trim(),contentX,y,'18px \"IBM Plex Sans KR\",sans-serif',muted);
+    text('UNOFFICIAL FAN ARCHIVE  ·  GIKUHASI 2026',contentX+contentW,y,'15px \"DM Mono\",monospace',muted,'right');
     // Dock and MacBook lower bezel
-    const dockY=H-58;rounded(W/2-150,dockY,300,43,13,'rgba(247,250,252,.72)','rgba(255,255,255,.75)',1);
-    const dockColors=['#54a9df','#f0c64e','#bd78b7','#69a9d1'];dockColors.forEach((c,i)=>{rounded(W/2-128+i*65,dockY+7,29,29,8,c);});
-    ctx.fillStyle='rgba(34,52,61,.55)';ctx.fillRect(W/2-45,H-7,90,3);
+    const dockY=H-68;rounded(W/2-180,dockY,360,52,15,'rgba(247,250,252,.72)','rgba(255,255,255,.75)',1);
+    const dockColors=['#54a9df','#f0c64e','#bd78b7','#69a9d1'];dockColors.forEach((c,i)=>{rounded(W/2-152+i*75,dockY+9,34,34,9,c);});
+    ctx.fillStyle='rgba(34,52,61,.55)';ctx.fillRect(W/2-52,H-8,104,4);
     const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw new Error('PNG 생성에 실패했습니다.');
     const url=URL.createObjectURL(blob);
     if(isIOS){if(imageTab){imageTab.location.href=url;}else{const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener';link.textContent='생성된 PNG 열기';link.style.cssText='display:block;margin:12px auto;padding:12px;text-align:center;background:#496b73;color:white;border-radius:8px;';button.insertAdjacentElement('afterend',link);}button.textContent='PNG OPENED';}
