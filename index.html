@@ -37,7 +37,7 @@ button:disabled{opacity:.35;cursor:not-allowed}
 .event{display:flex;gap:9px;align-items:center;border-top:1px solid rgba(85,121,133,.32);padding:10px 0;min-width:0}
 .event input{accent-color:var(--blue);width:17px;height:17px;flex:0 0 17px;margin:0}
 .favorite-toggle{display:flex;align-items:center;justify-content:center;flex:0 0 34px;width:34px;height:34px;padding:0;border:1px solid rgba(85,121,133,.35);border-radius:50%;background:rgba(255,255,255,.28);color:#557985;font-size:0;line-height:0;transition:background .15s,transform .15s,color .15s}
-.favorite-toggle svg{display:block;width:19px;height:19px;flex:0 0 19px;overflow:visible}
+.favorite-toggle svg{display:block;width:19px;height:19px;flex:0 0 19px;overflow:visible;transform:translateX(-1px)}
 .favorite-toggle[aria-pressed="true"]{background:#496b73;color:#fff;border-color:#496b73;transform:scale(1.04)}
 .favorite-toggle:disabled{opacity:.2}
 @media(max-width:420px){.event{gap:7px}.event strong{font-size:11px}.event small{font-size:9px}}
@@ -286,7 +286,7 @@ $('saveBtn').onclick=async()=>{
     const monthCardHeights=monthGroups.map(([m,events])=>52+events.length*78);
     const monthGridHeight=monthCardHeights.reduce((sum,h)=>sum+h+16,0);
     const bestListHeight=bestItems.length*62;
-    const contentHeight=34+180+30+28+22+120+62+48+14+bestListHeight+22+48+14+monthGridHeight+54;
+    const contentHeight=34+18+120+62+48+14+bestListHeight+22+48+14+monthGridHeight+24;
     const windowY=82,titleH=58,windowH=titleH+contentHeight+34;
     const H=windowY+windowH+78;
     const canvas=document.createElement('canvas');canvas.width=W*scale;canvas.height=H*scale;
@@ -311,14 +311,14 @@ $('saveBtn').onclick=async()=>{
     ['#ff6259','#ffbd44','#35c759'].forEach((c,i)=>{ctx.beginPath();ctx.arc(windowX+30+i*29,windowY+29,9,0,Math.PI*2);ctx.fillStyle=c;ctx.fill();ctx.strokeStyle='rgba(0,0,0,.12)';ctx.stroke();});
     text('2026-gikuhasi-recap',windowX+windowW/2,windowY+36,'500 19px -apple-system, sans-serif','#53616e','center');
     let y=windowY+titleH+34;
-    // Rounded, friendly GIKUHASI wordmark for the saved poster.
-    const logoBoxH=132;rounded(contentX,y,contentW,logoBoxH,12,'#557985');
-    text('gikuhasi',W/2,y+91,'600 88px "Fredoka", "Arial Rounded MT Bold", sans-serif','#ffffff','center');y+=logoBoxH+24;
-    ctx.strokeStyle='#b8d2dc';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(contentX,y);ctx.lineTo(contentX+contentW,y);ctx.stroke();y+=28;
-    const statGap=14,statW=(contentW-statGap*2)/3;const stats=[[String(chosen.length).padStart(2,'0'),'LIVE SHOWS'],[String(best.length).padStart(2,'0'),'BEST LIVE'],['2026','YEAR FILE']];
+    // 상단 로고 영역은 생략하고 결과 요약부터 바로 표시합니다.
+    y+=18;
+    const statGap=18,statW=(contentW-statGap)/2,stats=[[String(chosen.length).padStart(2,'0'),'LIVE SHOWS'],[String(best.length).padStart(2,'0'),'BEST LIVE']];
     stats.forEach((st,i)=>{const x=contentX+i*(statW+statGap);rounded(x,y,statW,98,12,'#e8f2f5','#c7dbe1',1);text(st[0],x+20,y+57,'600 48px "IBM Plex Mono",monospace',teal);text(st[1],x+20,y+82,'17px "DM Mono",monospace',muted);});y+=122;
     // Best live: full-width rows, no tiny two-column chips.
-    rounded(contentX,y,contentW,50,9,teal);text('✧  BEST LIVE',contentX+20,y+33,'600 21px "DM Mono",monospace','#fff');text('FAVORITES',contentX+contentW-20,y+33,'17px "DM Mono",monospace','#fff','right');y+=64;
+    rounded(contentX,y,contentW,50,9,teal);
+    ctx.beginPath();ctx.moveTo(contentX+21,y+11);ctx.lineTo(contentX+21,y+34);ctx.lineTo(contentX+27,y+28);ctx.lineTo(contentX+32,y+39);ctx.lineTo(contentX+36,y+37);ctx.lineTo(contentX+31,y+26);ctx.lineTo(contentX+41,y+26);ctx.closePath();ctx.fillStyle='#fff';ctx.fill();
+    text('BEST LIVE',contentX+52,y+33,'600 21px "DM Mono",monospace','#fff');text('FAVORITES',contentX+contentW-20,y+33,'17px "DM Mono",monospace','#fff','right');y+=64;
     bestItems.forEach((e,i)=>{rounded(contentX,y,contentW,54,8,'#f7e9e5','#e2c9c1',1);const date=e.date?e.date.slice(5).replace('.','/')+'   ·   ':'';text(fit(date+e.title,'600 18px "IBM Plex Sans KR",sans-serif',contentW-36),contentX+18,y+35,'600 18px "IBM Plex Sans KR",sans-serif','#75594f');y+=62;});
     y+=10;
     rounded(contentX,y,contentW,50,9,teal);text('ATTENDED SHOWS',contentX+20,y+33,'600 21px "DM Mono",monospace','#fff');text(String(chosen.length).padStart(2,'0')+' SHOWS',contentX+contentW-20,y+33,'17px "DM Mono",monospace','#fff','right');y+=64;
@@ -333,9 +333,7 @@ $('saveBtn').onclick=async()=>{
       });
       y+=rowH+16;
     });
-    y+=8;ctx.strokeStyle='#c7dbe1';ctx.beginPath();ctx.moveTo(contentX,y);ctx.lineTo(contentX+contentW,y);ctx.stroke();y+=30;
-    text($('nickname').value.trim(),contentX,y,'19px "IBM Plex Sans KR",sans-serif',muted);
-    text('UNOFFICIAL FAN ARCHIVE  ·  GIKUHASI 2026',contentX+contentW,y,'16px "DM Mono",monospace',muted,'right');
+    // 하단의 팬 아카이브 문구를 제거해 공연 목록 아래 여백을 줄였습니다.
     // Mac dock and lower bezel remain visible at the bottom of the portrait export.
     const dockY=H-68;rounded(W/2-180,dockY,360,52,15,'rgba(247,250,252,.72)','rgba(255,255,255,.75)',1);
     const dockColors=['#54a9df','#f0c64e','#bd78b7','#69a9d1'];dockColors.forEach((c,i)=>{rounded(W/2-152+i*75,dockY+9,34,34,9,c);});
