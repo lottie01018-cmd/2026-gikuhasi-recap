@@ -37,7 +37,7 @@ button:disabled{opacity:.35;cursor:not-allowed}
 .event{display:flex;gap:9px;align-items:center;border-top:1px solid rgba(85,121,133,.32);padding:10px 0;min-width:0}
 .event input{accent-color:var(--blue);width:17px;height:17px;flex:0 0 17px;margin:0}
 .favorite-toggle{display:flex;align-items:center;justify-content:center;flex:0 0 34px;width:34px;height:34px;padding:0;border:1px solid rgba(85,121,133,.35);border-radius:50%;background:rgba(255,255,255,.28);color:#557985;font-size:0;line-height:0;transition:background .15s,transform .15s,color .15s}
-.favorite-toggle svg{display:block;width:19px;height:19px;flex:0 0 19px;overflow:visible;transform:translateX(-1px)}
+.favorite-toggle svg{display:block;width:19px;height:19px;flex:0 0 19px;overflow:visible}
 .favorite-toggle[aria-pressed="true"]{background:#496b73;color:#fff;border-color:#496b73;transform:scale(1.04)}
 .favorite-toggle:disabled{opacity:.2}
 @media(max-width:420px){.event{gap:7px}.event strong{font-size:11px}.event small{font-size:9px}}
@@ -50,9 +50,9 @@ button:disabled{opacity:.35;cursor:not-allowed}
 .result-wrap{padding:14px;background:rgba(255,255,255,.22);border:1px dashed rgba(73,107,115,.55)}
 #resultCard{width:100%;max-width:660px;margin:auto;background:var(--card);color:var(--card-ink);padding:24px 22px;border:1px solid #d7d6cc;box-shadow:inset 0 0 0 5px rgba(255,255,255,.55);font-family:'IBM Plex Mono','IBM Plex Sans KR','Noto Sans KR',monospace}
 .recap-top{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:2px solid var(--card-ink);padding-bottom:12px;font:10px 'DM Mono',monospace;letter-spacing:.08em;color:#60777a}
-.recap-title{font:600 clamp(24px,5vw,36px)/1.05 'IBM Plex Mono',monospace;letter-spacing:-.06em;margin:17px 0 5px;color:var(--card-ink)}
+.recap-title{font:600 clamp(19px,4.5vw,32px)/1.1 'IBM Plex Mono',monospace;letter-spacing:-.065em;white-space:nowrap;margin:17px 0 5px;color:var(--card-ink)}
 .recap-subtitle{font:12px 'IBM Plex Sans KR','Noto Sans KR',sans-serif;color:#60777a}
-.recap-stats{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:8px;margin:18px 0 14px}
+.recap-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:18px 0 14px}
 .stat-box{background:#e3edf0;border:1px solid #c7d7d8;padding:10px 9px;min-width:0}
 .stat-number{font:600 27px/1 'IBM Plex Mono',monospace;color:#496b73}
 .stat-label{font:9px 'DM Mono',monospace;letter-spacing:.06em;color:#60777a;margin-top:6px}
@@ -153,13 +153,10 @@ body{background:#83b8d2}
     <div class="windowbody">
       <div class="step">PERSONAL LIVE ARCHIVE / COMPLETE</div>
       <div class="result-wrap"><div id="resultCard">
-        <div class="recap-top"><span>GIKUHASI FAN ARCHIVE</span><span>2026 / LIVE LOG</span></div>
-        <div class="recap-title">GIKUHASI<br>2026 RECAP</div>
-        <div class="recap-subtitle">올해 함께한 공연의 기록</div>
+        <div class="recap-title">GIKUHASI 2026 RECAP</div>
         <div class="recap-stats">
           <div class="stat-box"><div class="stat-number" id="rCount">00</div><div class="stat-label">LIVE SHOWS</div></div>
           <div class="stat-box"><div class="stat-number" id="rBestCount">00</div><div class="stat-label">BEST LIVE</div></div>
-          <div class="stat-box"><div class="stat-number">2026</div><div class="stat-label">YEAR FILE</div></div>
         </div>
         <div class="recap-section"><div class="recap-section-head"><span>BEST LIVE</span><span>FAVORITES</span></div><div class="best-list" id="rLive"></div></div>
         <div class="recap-section"><div class="recap-section-head"><span>ATTENDED SHOWS</span><span id="rArchiveCount">00 SHOWS</span></div><div class="archive-grid" id="rAttended"></div></div>
@@ -286,9 +283,9 @@ $('saveBtn').onclick=async()=>{
     const monthCardHeights=monthGroups.map(([m,events])=>52+events.length*78);
     const monthGridHeight=monthCardHeights.reduce((sum,h)=>sum+h+16,0);
     const bestListHeight=bestItems.length*62;
-    const contentHeight=34+18+120+62+48+14+bestListHeight+22+48+14+monthGridHeight+24;
-    const windowY=82,titleH=58,windowH=titleH+contentHeight+34;
-    const H=windowY+windowH+78;
+    const contentHeight=34+9+120+62+48+14+bestListHeight+22+48+14+monthGridHeight+12;
+    const windowY=82,titleH=58,windowH=titleH+contentHeight+17;
+    const H=windowY+windowH+39;
     const canvas=document.createElement('canvas');canvas.width=W*scale;canvas.height=H*scale;
     const ctx=canvas.getContext('2d');ctx.scale(scale,scale);
     const ink='#243a45',teal='#557985',muted='#69858e',paper='#f7fbfc',pale='#e7f2f6',line='#c5d9e0',accent='#d8edf5';
@@ -312,7 +309,7 @@ $('saveBtn').onclick=async()=>{
     text('2026-gikuhasi-recap',windowX+windowW/2,windowY+36,'500 19px -apple-system, sans-serif','#53616e','center');
     let y=windowY+titleH+34;
     // 상단 로고 영역은 생략하고 결과 요약부터 바로 표시합니다.
-    y+=18;
+    y+=9;
     const statGap=18,statW=(contentW-statGap)/2,stats=[[String(chosen.length).padStart(2,'0'),'LIVE SHOWS'],[String(best.length).padStart(2,'0'),'BEST LIVE']];
     stats.forEach((st,i)=>{const x=contentX+i*(statW+statGap);rounded(x,y,statW,98,12,'#e8f2f5','#c7dbe1',1);text(st[0],x+20,y+57,'600 48px "IBM Plex Mono",monospace',teal);text(st[1],x+20,y+82,'17px "DM Mono",monospace',muted);});y+=122;
     // Best live: full-width rows, no tiny two-column chips.
@@ -333,7 +330,7 @@ $('saveBtn').onclick=async()=>{
       });
       y+=rowH+16;
     });
-    // 하단의 팬 아카이브 문구를 제거해 공연 목록 아래 여백을 줄였습니다.
+    // 하단 여백을 절반가량 줄였습니다.
     // Mac dock and lower bezel remain visible at the bottom of the portrait export.
     const dockY=H-68;rounded(W/2-180,dockY,360,52,15,'rgba(247,250,252,.72)','rgba(255,255,255,.75)',1);
     const dockColors=['#54a9df','#f0c64e','#bd78b7','#69a9d1'];dockColors.forEach((c,i)=>{rounded(W/2-152+i*75,dockY+9,34,34,9,c);});
